@@ -21,3 +21,4 @@ EXPOSE 5001
 CMD ["python", "producer.py"]
 
 
+
