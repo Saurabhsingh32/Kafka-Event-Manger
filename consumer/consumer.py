@@ -67,7 +67,7 @@ def comsumer_details(topic_name):
         while True:
             time.sleep(WAIT_DURATION)
             with lock:
-                if batch and (time.time() - last_received_time) > BATCH_SIZE:
+                if batch and (time.time() - last_received_time) > WAIT_DURATION:
                     db_info(batch)
                     batch = []
     threading.Thread(target=timeout, daemon= True).start()
