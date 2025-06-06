@@ -8,6 +8,8 @@ from datetime import datetime
 
 topics = ['North','South','East','West','others']
 threads = []
+BATCH_SIZE = 5
+WAIT_DURATION = 20
 
 # Kafka Consumer Configuration
 def comsumer_details(topic_name):
@@ -57,16 +59,15 @@ def comsumer_details(topic_name):
         connection.close()
 
     batch = []
-    batch_size = 5
     last_received_time = time.time()
     lock = threading.Lock()
 
     def timeout():
         nonlocal last_received_time, batch
         while True:
-            time.sleep(20)
+            time.sleep(WAIT_DURATION)
             with lock:
-                if batch and (time.time() - last_received_time) > batch_size:
+                if batch and (time.time() - last_received_time) > BATCH_SIZE:
                     db_info(batch)
                     batch = []
     threading.Thread(target=timeout, daemon= True).start()
@@ -76,7 +77,7 @@ def comsumer_details(topic_name):
         # Assuming data is a dictionary with keys matching your table columns
         with lock:
             batch.append(data)
-            if len(batch) % batch_size == 0:
+            if len(batch) % BATCH_SIZE == 0:
                 db_info(batch)
                 batch =[]
 
